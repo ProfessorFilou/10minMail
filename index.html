@@ -9,62 +9,93 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#070b10; --bg2:#0d1520; --glass:rgba(255,255,255,.045); --line:rgba(255,255,255,.09);
-    --text:#e8f1f5; --muted:#8aa0ad; --accent:#00ffcc; --accent-d:#00b894; --danger:#ff5c7a; --warn:#ffb84d;
+    --bg:#060a0f; --glass:rgba(255,255,255,.045); --line:rgba(255,255,255,.09);
+    --text:#e8f1f5; --muted:#8aa0ad; --accent:#00ffcc; --acc:0,255,204; --danger:#ff5c7a; --warn:#ffb84d;
     --font:'Space Grotesk',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
   }
   *{box-sizing:border-box;margin:0}
+  [hidden]{display:none!important}
   html,body{min-height:100%}
   body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+    background-size:44px 44px;mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 75%)}
   .orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-  .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.28;animation:drift 26s ease-in-out infinite alternate}
-  .orb.a{width:480px;height:480px;background:#00ffcc;top:-140px;left:-120px}
+  .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.26;animation:drift 26s ease-in-out infinite alternate;transition:background .5s}
+  .orb.a{width:480px;height:480px;background:var(--accent);top:-140px;left:-120px}
   .orb.b{width:420px;height:420px;background:#3d7bff;bottom:-160px;right:-100px;animation-duration:32s}
   @keyframes drift{to{transform:translate(70px,50px) scale(1.12)}}
-  @media (prefers-reduced-motion:reduce){.orb{animation:none}*{transition:none!important}}
+  @media (prefers-reduced-motion:reduce){.orb,.pulse,.msg.new{animation:none!important}*{transition:none!important}}
 
-  .wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:28px 18px 60px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px}
-  .brand{font-weight:700;font-size:18px;letter-spacing:.2px}
+  .wrap{position:relative;z-index:1;max-width:1020px;margin:0 auto;padding:26px 18px 60px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+  .brand{font-weight:700;font-size:18px}
   .brand span{color:var(--accent)}
-  .back{color:var(--muted);text-decoration:none;font-size:14px;border:1px solid var(--line);padding:7px 14px;border-radius:999px;transition:.2s}
+  .hctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .pill{font-size:13px;padding:6px 12px;border-radius:999px;color:var(--muted);background:transparent}
+  .pill[aria-pressed="true"]{color:#04120f;background:var(--accent);border-color:var(--accent);font-weight:700}
+  .dots{display:flex;gap:7px;padding:0 6px}
+  .dot{width:18px;height:18px;border-radius:50%;padding:0;border:2px solid transparent;background:var(--c)}
+  .dot[aria-pressed="true"]{border-color:#fff}
+  .back{color:var(--muted);text-decoration:none;font-size:13px;border:1px solid var(--line);padding:6px 13px;border-radius:999px;transition:.2s}
   .back:hover{color:var(--accent);border-color:var(--accent)}
 
-  h1{font-size:clamp(28px,5vw,44px);line-height:1.1;font-weight:700;margin-bottom:10px;max-width:16ch}
-  .sub{color:var(--muted);max-width:52ch;margin-bottom:28px}
+  h1{font-size:clamp(28px,5vw,46px);line-height:1.08;font-weight:700;margin-bottom:10px;max-width:16ch}
+  .sub{color:var(--muted);max-width:54ch;margin-bottom:26px}
 
   .glass{background:var(--glass);border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 
-  /* Adress-Karte */
-  .addr-card{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;padding:26px;box-shadow:0 0 60px rgba(0,255,204,.07)}
+  .addr-card{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:26px;box-shadow:0 0 70px rgba(var(--acc),.08)}
   .addr-label{color:var(--muted);font-size:14px;margin-bottom:8px}
-  .addr{font-family:var(--mono);font-weight:700;font-size:clamp(17px,3.4vw,28px);color:var(--accent);word-break:break-all;text-shadow:0 0 22px rgba(0,255,204,.35);min-height:1.4em}
+  .addr{font-family:var(--mono);font-weight:700;font-size:clamp(17px,3.4vw,29px);color:var(--accent);word-break:break-all;text-shadow:0 0 24px rgba(var(--acc),.4);min-height:1.4em}
   .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-  button{font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;border-radius:12px;padding:10px 16px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);transition:.18s}
+  button,select,input{font-family:var(--font);font-size:14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text)}
+  button{font-weight:500;cursor:pointer;padding:10px 16px;transition:.18s}
   button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
   button:disabled{opacity:.45;cursor:not-allowed}
   button.primary{background:var(--accent);color:#04120f;border-color:var(--accent);font-weight:700}
-  button.primary:hover:not(:disabled){background:#5cffe0;color:#04120f;box-shadow:0 0 24px rgba(0,255,204,.45)}
-  button:focus-visible,a:focus-visible,.msg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  button.primary:hover:not(:disabled){filter:brightness(1.15);color:#04120f;box-shadow:0 0 26px rgba(var(--acc),.5)}
+  button.danger:hover:not(:disabled){border-color:var(--danger);color:var(--danger)}
+  input,select{padding:10px 12px;min-width:0}
+  select option{background:#0d1520}
+  input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible,.msg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  kbd{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;color:var(--text)}
 
-  .ring{position:relative;width:132px;height:132px}
+  .custom{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .custom input{flex:1 1 140px}
+  .custom .at{color:var(--muted);font-family:var(--mono)}
+
+  .ringcol{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .ring{position:relative;width:136px;height:136px}
   .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
   .ring circle{fill:none;stroke-width:7}
   .ring .track{stroke:rgba(255,255,255,.08)}
-  .ring .bar{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s;filter:drop-shadow(0 0 6px rgba(0,255,204,.6))}
+  .ring .bar{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s;filter:drop-shadow(0 0 6px rgba(var(--acc),.7))}
   .ring.low .bar{stroke:var(--warn);filter:drop-shadow(0 0 6px rgba(255,184,77,.6))}
   .ring.crit .bar{stroke:var(--danger);filter:drop-shadow(0 0 6px rgba(255,92,122,.6))}
-  .time{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-family:var(--mono);font-size:26px;font-weight:700}
+  .time{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-family:var(--mono);font-size:25px;font-weight:700}
   .time small{display:block;font-family:var(--font);font-size:12px;color:var(--muted);font-weight:400;margin-top:-4px}
+  .life{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .life select{padding:5px 8px;font-size:13px}
 
-  /* Posteingang */
-  .inbox{margin-top:22px;display:grid;grid-template-columns:minmax(250px,340px) 1fr;gap:18px;align-items:start}
-  .panel-h{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);font-weight:500}
+  .status{margin-top:14px;font-size:14px;color:var(--muted);min-height:1.4em}
+  .status.err{color:var(--danger)}
+
+  .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  .chip{font-size:13px;color:var(--muted);padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03)}
+  .chip b{color:var(--text);font-family:var(--mono);font-weight:700}
+
+  .inbox{margin-top:22px;display:grid;grid-template-columns:minmax(260px,350px) 1fr;gap:18px;align-items:start}
+  .panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);font-weight:500}
   .count{font-family:var(--mono);font-size:13px;color:var(--accent)}
+  .search{padding:10px 16px;border-bottom:1px solid var(--line)}
+  .search input{width:100%}
   .list{max-height:520px;overflow:auto}
-  .msg{padding:14px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:.15s;position:relative}
+  .msg{padding:14px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;position:relative}
   .msg:hover{background:rgba(255,255,255,.04)}
-  .msg.active{background:rgba(0,255,204,.08);box-shadow:inset 3px 0 0 var(--accent)}
+  .msg.active{background:rgba(var(--acc),.08);box-shadow:inset 3px 0 0 var(--accent)}
+  .msg.new{animation:slidein .55s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes slidein{from{opacity:0;transform:translateX(-28px);background:rgba(var(--acc),.25)}}
   .msg.unseen .subj::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:8px;box-shadow:0 0 8px var(--accent)}
   .from{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .subj{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -74,31 +105,48 @@
   .pulse{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-right:8px;animation:pulse 1.6s ease-in-out infinite}
   @keyframes pulse{50%{opacity:.25;transform:scale(.7)}}
 
-  .reader{min-height:300px;overflow:hidden}
-  .r-head{padding:20px 22px;border-bottom:1px solid var(--line)}
+  .reader{min-height:320px;overflow:hidden}
+  .r-head{padding:20px 22px 14px;border-bottom:1px solid var(--line)}
   .r-subj{font-size:20px;font-weight:700;margin-bottom:6px;word-break:break-word}
-  .r-meta{font-size:13px;color:var(--muted)}
+  .r-meta{font-size:13px;color:var(--muted);word-break:break-word}
   .r-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
   .r-tools button{padding:7px 12px;font-size:13px}
-  .r-body{padding:0}
+  .codechip{font-family:var(--mono);font-weight:700;border-color:rgba(var(--acc),.5)!important;color:var(--accent)!important}
+  .tabs{display:flex;gap:4px;padding:0 14px;border-bottom:1px solid var(--line)}
+  .tabs button{border:0;border-radius:0;background:none;padding:12px 14px;color:var(--muted);border-bottom:2px solid transparent}
+  .tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
   iframe{width:100%;border:0;background:#fff;min-height:340px;display:block}
   .r-text{padding:22px;white-space:pre-wrap;word-break:break-word;font-size:15px}
+  .r-text.mono{font-family:var(--mono);font-size:12px;max-height:480px;overflow:auto;color:var(--muted)}
   .att{padding:14px 22px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px}
   .att button{font-size:13px;padding:7px 12px}
   .note{padding:10px 22px;background:rgba(255,184,77,.08);color:var(--warn);font-size:13px;border-bottom:1px solid var(--line)}
+  .note button{margin-left:8px;padding:4px 10px;font-size:12px}
+  .links{padding:6px 0}
+  .lnk{display:flex;align-items:center;gap:12px;padding:12px 22px;border-bottom:1px solid var(--line)}
+  .lnk .u{flex:1;min-width:0}
+  .lnk .d{font-weight:700}
+  .lnk .p{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--mono)}
+  .lnk.key .d::after{content:" Bestätigungslink?";font-weight:400;font-size:12px;color:var(--accent)}
+  .lnk button{padding:6px 11px;font-size:13px}
 
-  .status{margin-top:16px;font-size:14px;color:var(--muted);min-height:1.4em}
-  .status.err{color:var(--danger)}
-  .foot{margin-top:40px;color:var(--muted);font-size:13px;max-width:70ch}
+  .tools{margin-top:22px;padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .tools h2{font-size:16px;font-weight:700;margin-bottom:4px}
+  .tools p{font-size:13px;color:var(--muted);margin-bottom:12px}
+  .gen{display:flex;gap:8px;align-items:center}
+  .gen code{flex:1;min-width:0;font-family:var(--mono);font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.25);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gen button{padding:9px 12px}
+
+  .foot{margin-top:34px;color:var(--muted);font-size:13px;max-width:78ch}
   .foot a{color:var(--accent)}
-
+  .foot .keys{margin-top:10px;display:flex;flex-wrap:wrap;gap:12px}
   .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);background:var(--accent);color:#04120f;font-weight:700;padding:10px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:10}
   .toast.show{opacity:1;transform:translate(-50%,0)}
 
-  @media (max-width:760px){
+  @media (max-width:780px){
     .addr-card{grid-template-columns:1fr;justify-items:start}
-    .ring{order:-1;width:110px;height:110px}
-    .inbox{grid-template-columns:1fr}
+    .ringcol{order:-1}
+    .inbox,.tools{grid-template-columns:1fr}
     .list{max-height:320px}
   }
 </style>
@@ -109,10 +157,21 @@
 <div class="wrap">
   <header>
     <div class="brand">Professor<span>Filou</span> · TempMail</div>
-    <a class="back" href="/">Zur Startseite</a>
+    <div class="hctl">
+      <button class="pill" id="tSound" aria-pressed="true" title="Ton bei neuer E-Mail">Ton</button>
+      <button class="pill" id="tNotify" aria-pressed="false" title="Browser-Benachrichtigung bei neuer E-Mail">Push</button>
+      <button class="pill" id="tAuto" aria-pressed="false" title="Neue E-Mail automatisch öffnen">Auto-Öffnen</button>
+      <div class="dots" role="group" aria-label="Akzentfarbe">
+        <button class="dot" style="--c:#00ffcc" data-acc="0,255,204,#00ffcc" aria-label="Türkis" aria-pressed="true"></button>
+        <button class="dot" style="--c:#8f7bff" data-acc="143,123,255,#8f7bff" aria-label="Violett" aria-pressed="false"></button>
+        <button class="dot" style="--c:#ff5ca8" data-acc="255,92,168,#ff5ca8" aria-label="Pink" aria-pressed="false"></button>
+        <button class="dot" style="--c:#ffb84d" data-acc="255,184,77,#ffb84d" aria-label="Orange" aria-pressed="false"></button>
+      </div>
+      <a class="back" href="/">Zur Startseite</a>
+    </div>
   </header>
 
-  <h1>Wegwerf-E-Mail für 10 Minuten</h1>
+  <h1>Wegwerf-E-Mail für jede Anmeldung</h1>
   <p class="sub">Adresse kopieren, irgendwo eintragen, Bestätigungsmail hier lesen. Nach Ablauf wird das Postfach gelöscht.</p>
 
   <section class="glass addr-card" aria-live="polite">
@@ -121,33 +180,73 @@
       <div class="addr" id="addr">Adresse wird erstellt …</div>
       <div class="actions">
         <button class="primary" id="btnCopy" disabled>Adresse kopieren</button>
-        <button id="btnExtend" disabled>10 Minuten verlängern</button>
+        <button id="btnExtend" disabled>Zeit verlängern</button>
         <button id="btnNew">Neue Adresse</button>
+        <button id="btnCustom" aria-expanded="false">Eigene Adresse</button>
+      </div>
+      <div class="custom" id="custom" hidden>
+        <input id="cLocal" placeholder="wunschname" maxlength="30" autocomplete="off" spellcheck="false" aria-label="Wunschname">
+        <span class="at">@</span>
+        <select id="cDomain" aria-label="Domain"></select>
+        <button class="primary" id="cGo">Erstellen</button>
       </div>
     </div>
-    <div class="ring" id="ring">
-      <svg viewBox="0 0 120 120" aria-hidden="true">
-        <circle class="track" cx="60" cy="60" r="52"/>
-        <circle class="bar" id="bar" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="0"/>
-      </svg>
-      <div class="time"><div><span id="clock">10:00</span><small>verbleibend</small></div></div>
+    <div class="ringcol">
+      <div class="ring" id="ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="track" cx="60" cy="60" r="52"/>
+          <circle class="bar" id="bar" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="0"/>
+        </svg>
+        <div class="time"><div><span id="clock">10:00</span><small>verbleibend</small></div></div>
+      </div>
+      <label class="life">Laufzeit
+        <select id="life" aria-label="Laufzeit">
+          <option value="600">10 Min</option>
+          <option value="1800">30 Min</option>
+          <option value="3600">60 Min</option>
+        </select>
+      </label>
     </div>
   </section>
   <div class="status" id="status"></div>
 
+  <div class="stats">
+    <span class="chip">Empfangen <b id="sRecv">0</b></span>
+    <span class="chip">Läuft ab um <b id="sExp">–</b></span>
+    <span class="chip">API-Last <b id="sApi">0/8</b> pro Sekunde · <b id="sReq">0</b> Anfragen</span>
+  </div>
+
   <section class="inbox">
     <div class="glass">
-      <div class="panel-h"><span>Posteingang</span><span class="count" id="count">0</span></div>
-      <div class="list" id="list">
-        <div class="empty"><b><span class="pulse"></span>Warte auf E-Mails</b>Neue Nachrichten erscheinen hier automatisch.</div>
+      <div class="panel-h">
+        <span>Posteingang <span class="count" id="count">0</span></span>
+        <button class="danger" id="btnClear" style="padding:6px 11px;font-size:13px" disabled>Alle löschen</button>
       </div>
+      <div class="search"><input id="search" type="search" placeholder="Suchen (Absender, Betreff) …" aria-label="Posteingang durchsuchen"></div>
+      <div class="list" id="list"></div>
     </div>
-    <div class="glass reader" id="reader">
-      <div class="empty"><b>Keine Nachricht geöffnet</b>Wähle links eine E-Mail aus.</div>
+    <div class="glass reader" id="reader"></div>
+  </section>
+
+  <section class="glass tools">
+    <div>
+      <h2>Zufälliger Benutzername</h2>
+      <p>Für Anmeldungen, bei denen du nicht deinen echten Namen nutzen willst.</p>
+      <div class="gen"><code id="gUser">…</code><button id="gUserCopy">Kopieren</button><button id="gUserNew" aria-label="Neuer Benutzername">Neu</button></div>
+    </div>
+    <div>
+      <h2>Sicheres Passwort</h2>
+      <p>16 Zeichen, zufällig im Browser erzeugt. Es wird nirgends gespeichert.</p>
+      <div class="gen"><code id="gPass">…</code><button id="gPassCopy">Kopieren</button><button id="gPassNew" aria-label="Neues Passwort">Neu</button></div>
     </div>
   </section>
 
-  <p class="foot">Nutze Wegwerf-Adressen nicht für Konten, die du später brauchst: Passwort-Reset und Zugriff funktionieren nach Ablauf nicht mehr. Der Mail-Empfang läuft über den Dienst <a href="https://mail.tm" target="_blank" rel="noopener">mail.tm</a>.</p>
+  <div class="foot">
+    <p>Nutze Wegwerf-Adressen nicht für Konten, die du später brauchst: Passwort-Reset und Zugriff funktionieren nach Ablauf nicht mehr. Der E-Mail-Empfang läuft über den kostenlosen Dienst <a href="https://mail.tm" target="_blank" rel="noopener">mail.tm</a>.</p>
+    <div class="keys">
+      <span><kbd>C</kbd> Adresse kopieren</span><span><kbd>N</kbd> neue Adresse</span><span><kbd>R</kbd> aktualisieren</span><span><kbd>/</kbd> suchen</span>
+    </div>
+  </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -155,87 +254,160 @@
 (() => {
   'use strict';
   const API = 'https://api.mail.tm';
-  const LIFETIME = 10 * 60;      // Sekunden
   const POLL_MS = 6000;
   const CIRC = 2 * Math.PI * 52;
+  const BASE_TITLE = 'TempMail – Wegwerf-E-Mail | ProfessorFilou';
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const $ = id => document.getElementById(id);
-  const el = { addr:$('addr'), clock:$('clock'), bar:$('bar'), ring:$('ring'), list:$('list'), count:$('count'),
-               reader:$('reader'), status:$('status'), btnCopy:$('btnCopy'), btnExtend:$('btnExtend'),
-               btnNew:$('btnNew'), toast:$('toast') };
+  const el = {};
+  ['addr','clock','bar','ring','list','count','reader','status','btnCopy','btnExtend','btnNew','btnCustom','custom','cLocal','cDomain','cGo',
+   'life','toast','search','btnClear','sRecv','sExp','sApi','sReq','tSound','tNotify','tAuto','gUser','gPass'].forEach(k => el[k] = $(k));
 
-  let acct = null;       // {address,password,token,id,expires}
-  let messages = [];
-  let activeId = null;
-  let tickTimer = null, pollTimer = null;
-  let busy = false;
+  /* ---------- Einstellungen ---------- */
+  const defaults = { sound:true, notify:false, auto:false, lifetime:600, accent:'0,255,204,#00ffcc' };
+  let prefs = Object.assign({}, defaults);
+  try{ Object.assign(prefs, JSON.parse(localStorage.getItem('pf_tempmail_prefs')) || {}); }catch(e){}
+  const savePrefs = () => { try{ localStorage.setItem('pf_tempmail_prefs', JSON.stringify(prefs)); }catch(e){} };
 
-  /* ---------- Hilfsfunktionen ---------- */
   const store = {
     get(){ try{ return JSON.parse(sessionStorage.getItem('pf_tempmail')); }catch(e){ return null; } },
     set(v){ try{ sessionStorage.setItem('pf_tempmail', JSON.stringify(v)); }catch(e){} },
     clear(){ try{ sessionStorage.removeItem('pf_tempmail'); }catch(e){} }
   };
+
+  /* ---------- Zustand ---------- */
+  let acct = null;           // {address,password,token,id,expires,total}
+  let messages = [];
+  let knownIds = new Set();
+  let recvTotal = 0;
+  let activeId = null;
+  let domains = null;
+  let tickTimer = null, pollTimer = null, pollBusy = false, busy = false;
+  let filter = '';
+
+  /* ---------- Helfer ---------- */
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
   const rand = (n, chars='abcdefghijklmnopqrstuvwxyz0123456789') => {
     const a = new Uint32Array(n); crypto.getRandomValues(a);
     return Array.from(a, x => chars[x % chars.length]).join('');
   };
+  const pick = arr => arr[crypto.getRandomValues(new Uint32Array(1))[0] % arr.length];
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const fmtTime = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  const pad = n => String(n).padStart(2,'0');
+  const fmtClock = s => s >= 3600 ? `${Math.floor(s/3600)}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}` : `${pad(Math.floor(s/60))}:${pad(s%60)}`;
   const fmtDate = iso => new Date(iso).toLocaleString('de-DE', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
   const fmtSize = b => b > 1048576 ? (b/1048576).toFixed(1)+' MB' : Math.max(1,Math.round(b/1024))+' KB';
   const setStatus = (t, err=false) => { el.status.textContent = t || ''; el.status.classList.toggle('err', err); };
   let toastT;
-  const toast = t => { el.toast.textContent = t; el.toast.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(()=>el.toast.classList.remove('show'), 1800); };
+  const toast = t => { el.toast.textContent = t; el.toast.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(()=>el.toast.classList.remove('show'), 1900); };
+  async function copy(text){
+    try{ await navigator.clipboard.writeText(text); }
+    catch(e){
+      const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t);
+      t.select(); try{ document.execCommand('copy'); }catch(_){} t.remove();
+    }
+  }
+  function download(blob, name){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = name; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
 
+  /* ---------- API mit Rate-Limit-Schutz (mail.tm: 8 Anfragen/s pro IP) ---------- */
+  const hits = [];
+  let reqTotal = 0;
+  async function throttle(){
+    for(;;){
+      const now = Date.now();
+      while (hits.length && now - hits[0] > 1000) hits.shift();
+      if (hits.length < 7){ hits.push(now); reqTotal++; return; }
+      await sleep(1000 - (now - hits[0]) + 25);
+    }
+  }
   async function api(path, {method='GET', body, token, raw}={}){
     const headers = {};
     if (body) headers['Content-Type'] = 'application/json';
     if (token) headers['Authorization'] = 'Bearer ' + token;
-    const res = await fetch(API + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
-    if (res.status === 204) return null;
-    if (!res.ok) { const e = new Error('API ' + res.status); e.status = res.status; throw e; }
-    return raw ? res : res.json();
+    for (let attempt = 0; attempt < 2; attempt++){
+      await throttle();
+      const res = await fetch(API + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+      if (res.status === 429 && attempt === 0){ await sleep(1100); continue; }
+      if (res.status === 204) return null;
+      if (!res.ok){ const e = new Error('API ' + res.status); e.status = res.status; throw e; }
+      return raw ? res : res.json();
+    }
+  }
+  const listOf = r => r['hydra:member'] || r.member || [];
+
+  /* ---------- Adresse-Animation ---------- */
+  let scrT;
+  function scramble(node, text){
+    clearInterval(scrT);
+    if (reduced){ node.textContent = text; return; }
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let f = 0; const total = 22;
+    scrT = setInterval(() => {
+      f++;
+      const reveal = Math.floor(text.length * f / total);
+      let out = '';
+      for (let i = 0; i < text.length; i++){
+        const c = text[i];
+        out += (i < reveal || c === '@' || c === '.') ? c : chars[Math.floor(Math.random()*chars.length)];
+      }
+      node.textContent = out;
+      if (f >= total){ clearInterval(scrT); node.textContent = text; }
+    }, 32);
   }
 
   /* ---------- Konto ---------- */
-  async function createAccount(){
-    const dom = await api('/domains');
-    const list = dom['hydra:member'] || dom.member || [];
-    const active = list.filter(d => d.isActive !== false);
-    if (!active.length) throw new Error('Keine Domain verfügbar');
-    const domain = active[0].domain;
+  async function loadDomains(){
+    if (domains) return domains;
+    const r = await api('/domains');
+    domains = listOf(r).filter(d => d.isActive !== false && !d.isPrivate).map(d => d.domain);
+    if (!domains.length) throw new Error('Keine Domain verfügbar');
+    el.cDomain.innerHTML = domains.map(d => `<option>${esc(d)}</option>`).join('');
+    return domains;
+  }
+
+  async function createAccount(custom){
+    const doms = await loadDomains();
     const password = rand(20, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
-    for (let i = 0; i < 3; i++){
-      const address = `${rand(10)}@${domain}`;
+    const total = prefs.lifetime;
+    const tries = custom ? 1 : 3;
+    for (let i = 0; i < tries; i++){
+      const address = custom ? `${custom.local}@${custom.domain}` : `${rand(10)}@${doms[0]}`;
       try{
         const created = await api('/accounts', {method:'POST', body:{address, password}});
         const tok = await api('/token', {method:'POST', body:{address, password}});
-        return { address, password, token: tok.token, id: created.id || tok.id, expires: Date.now() + LIFETIME*1000 };
-      }catch(e){ if (e.status !== 422) throw e; } // Adresse vergeben -> neu versuchen
+        return { address, password, token: tok.token, id: created.id || tok.id, expires: Date.now() + total*1000, total };
+      }catch(e){ if (e.status !== 422) throw e; }
     }
-    throw new Error('Adresse konnte nicht erstellt werden');
+    const e = new Error('vergeben'); e.status = 422; throw e;
   }
 
-  async function newAddress(){
+  async function newAddress(custom){
     if (busy) return; busy = true;
-    el.btnNew.disabled = true; el.btnCopy.disabled = true; el.btnExtend.disabled = true;
+    [el.btnNew, el.btnCopy, el.btnExtend, el.btnClear, el.cGo].forEach(b => b.disabled = true);
     setStatus('');
     stopTimers();
     await destroyAccount();
-    messages = []; activeId = null; renderList(); renderEmptyReader();
+    messages = []; knownIds = new Set(); recvTotal = 0; activeId = null;
+    renderList(); renderEmptyReader(); updateTitle(); updateStats();
     el.addr.textContent = 'Adresse wird erstellt …';
     try{
-      acct = await createAccount();
+      acct = await createAccount(custom);
       store.set(acct);
-      showAccount();
+      showAccount(true);
+      if (custom){ el.custom.hidden = true; el.btnCustom.setAttribute('aria-expanded','false'); }
     }catch(e){
       console.error(e);
-      el.addr.textContent = 'Nicht verfügbar';
-      setStatus(e.status === 429 ? 'Zu viele Anfragen. Warte kurz und klicke auf „Neue Adresse“.'
-                                  : 'Der Mail-Dienst antwortet gerade nicht. Klicke auf „Neue Adresse“, um es erneut zu versuchen.', true);
+      el.addr.textContent = 'Keine Adresse aktiv';
+      if (e.status === 422) setStatus('Diese Adresse ist schon vergeben. Wähle einen anderen Namen oder eine andere Domain.', true);
+      else if (e.status === 429) setStatus('Zu viele Anfragen. Warte kurz und versuche es erneut.', true);
+      else setStatus('Der Mail-Dienst antwortet gerade nicht. Klicke auf „Neue Adresse“, um es erneut zu versuchen.', true);
     }finally{
-      busy = false; el.btnNew.disabled = false;
+      busy = false; el.btnNew.disabled = false; el.cGo.disabled = false;
     }
   }
 
@@ -245,8 +417,8 @@
     try{ await api('/accounts/' + a.id, {method:'DELETE', token:a.token}); }catch(e){}
   }
 
-  function showAccount(){
-    el.addr.textContent = acct.address;
+  function showAccount(animate){
+    if (animate) scramble(el.addr, acct.address); else el.addr.textContent = acct.address;
     el.btnCopy.disabled = false; el.btnExtend.disabled = false;
     tick(); poll();
     tickTimer = setInterval(tick, 1000);
@@ -254,53 +426,93 @@
   }
   function stopTimers(){ clearInterval(tickTimer); clearInterval(pollTimer); }
 
-  /* ---------- Countdown ---------- */
+  /* ---------- Countdown & Stats ---------- */
   function tick(){
+    updateStats();
     if (!acct) return;
     const left = Math.max(0, Math.round((acct.expires - Date.now())/1000));
-    el.clock.textContent = fmtTime(left);
-    el.bar.style.strokeDashoffset = CIRC * (1 - left/LIFETIME);
+    el.clock.textContent = fmtClock(left);
+    el.bar.style.strokeDashoffset = CIRC * (1 - left/acct.total);
     el.ring.classList.toggle('low', left <= 120 && left > 30);
     el.ring.classList.toggle('crit', left <= 30);
     if (left <= 0) expire();
+  }
+  function updateStats(){
+    const now = Date.now();
+    const last = hits.filter(t => now - t <= 1000).length;
+    el.sApi.textContent = last + '/8';
+    el.sReq.textContent = reqTotal;
+    el.sRecv.textContent = recvTotal;
+    el.sExp.textContent = acct ? new Date(acct.expires).toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'}) : '–';
   }
   async function expire(){
     stopTimers();
     await destroyAccount();
     el.addr.textContent = 'Adresse abgelaufen';
-    el.btnCopy.disabled = true; el.btnExtend.disabled = true;
-    messages = []; renderList(); renderEmptyReader();
+    el.btnCopy.disabled = true; el.btnExtend.disabled = true; el.btnClear.disabled = true;
+    messages = []; renderList(); renderEmptyReader(); updateTitle(); updateStats();
     setStatus('Postfach gelöscht. Klicke auf „Neue Adresse“, um eine neue zu erstellen.');
+  }
+  function updateTitle(){
+    const n = messages.filter(m => !m.seen).length;
+    document.title = (n ? `(${n}) ` : '') + BASE_TITLE;
+  }
+
+  /* ---------- Benachrichtigungen ---------- */
+  function beep(){
+    if (!prefs.sound) return;
+    try{
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+      o.type = 'sine'; o.frequency.setValueAtTime(880, t); o.frequency.setValueAtTime(1320, t + .09);
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.15, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + .26);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + .27);
+      o.onended = () => ac.close();
+    }catch(e){}
+  }
+  function notify(m){
+    if (!prefs.notify || !('Notification' in window) || Notification.permission !== 'granted' || !document.hidden) return;
+    try{ new Notification('Neue E-Mail', { body: (m.from?.address || '') + ' – ' + (m.subject || '(ohne Betreff)') }); }catch(e){}
   }
 
   /* ---------- Posteingang ---------- */
   async function poll(){
-    if (!acct) return;
+    if (!acct || pollBusy) return;
+    pollBusy = true;
     try{
       const r = await api('/messages', {token: acct.token});
-      const items = r['hydra:member'] || r.member || [];
-      const known = new Set(messages.map(m => m.id));
-      const fresh = items.filter(m => !known.has(m.id)).length;
+      const items = listOf(r);
+      const fresh = items.filter(m => !knownIds.has(m.id));
+      fresh.forEach(m => knownIds.add(m.id));
+      recvTotal += fresh.length;
       messages = items;
-      renderList();
-      if (fresh && messages.length > fresh) toast('Neue E-Mail eingegangen');
+      renderList(new Set(fresh.map(m => m.id)));
+      updateTitle();
+      if (fresh.length){
+        toast(fresh.length === 1 ? 'Neue E-Mail eingegangen' : fresh.length + ' neue E-Mails');
+        beep(); notify(fresh[0]);
+        if (prefs.auto) openMsg(fresh[0].id);
+      }
       setStatus('');
     }catch(e){
-      if (e.status === 401 || e.status === 404) { await expire(); return; }
-      setStatus('Posteingang konnte nicht aktualisiert werden. Neuer Versuch in wenigen Sekunden.', true);
-    }
+      if (e.status === 401 || e.status === 404) { await expire(); }
+      else setStatus('Posteingang konnte nicht aktualisiert werden. Neuer Versuch in wenigen Sekunden.', true);
+    }finally{ pollBusy = false; }
   }
 
-  function renderList(){
+  function renderList(freshIds = new Set()){
     el.count.textContent = messages.length;
-    if (!messages.length){
-      el.list.innerHTML = acct
-        ? '<div class="empty"><b><span class="pulse"></span>Warte auf E-Mails</b>Neue Nachrichten erscheinen hier automatisch.</div>'
-        : '<div class="empty"><b>Posteingang leer</b>Erstelle eine Adresse, um E-Mails zu empfangen.</div>';
+    el.btnClear.disabled = !messages.length;
+    const q = filter.trim().toLowerCase();
+    const shown = q ? messages.filter(m => ((m.from?.address||'') + ' ' + (m.from?.name||'') + ' ' + (m.subject||'') + ' ' + (m.intro||'')).toLowerCase().includes(q)) : messages;
+    if (!shown.length){
+      el.list.innerHTML = !acct ? '<div class="empty"><b>Posteingang leer</b>Erstelle eine Adresse, um E-Mails zu empfangen.</div>'
+        : messages.length ? '<div class="empty"><b>Keine Treffer</b>Passe die Suche an.</div>'
+        : '<div class="empty"><b><span class="pulse"></span>Warte auf E-Mails</b>Neue Nachrichten erscheinen hier automatisch.</div>';
       return;
     }
-    el.list.innerHTML = messages.map(m => `
-      <div class="msg ${m.seen ? '' : 'unseen'} ${m.id === activeId ? 'active' : ''}" tabindex="0" role="button" data-id="${esc(m.id)}">
+    el.list.innerHTML = shown.map(m => `
+      <div class="msg ${m.seen ? '' : 'unseen'} ${m.id === activeId ? 'active' : ''} ${freshIds.has(m.id) ? 'new' : ''}" tabindex="0" role="button" data-id="${esc(m.id)}">
         <div class="from">${esc(m.from?.name || m.from?.address || 'Unbekannt')} · ${esc(fmtDate(m.createdAt))}</div>
         <div class="subj">${esc(m.subject || '(ohne Betreff)')}</div>
         <div class="intro">${esc(m.intro || '')}</div>
@@ -312,74 +524,161 @@
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const n = e.target.closest('.msg'); if (n){ e.preventDefault(); openMsg(n.dataset.id); }
   });
+  el.search.addEventListener('input', () => { filter = el.search.value; renderList(); });
+
+  el.btnClear.onclick = async () => {
+    if (!acct || !messages.length) return;
+    if (!confirm('Alle ' + messages.length + ' E-Mails löschen?')) return;
+    const ids = messages.map(m => m.id), tok = acct.token;
+    messages = []; activeId = null; renderList(); renderEmptyReader(); updateTitle();
+    for (const id of ids){ try{ await api('/messages/' + id, {method:'DELETE', token: tok}); }catch(e){} }
+    toast('Posteingang geleert');
+  };
 
   function renderEmptyReader(){
     el.reader.innerHTML = '<div class="empty"><b>Keine Nachricht geöffnet</b>Wähle links eine E-Mail aus.</div>';
   }
 
-  async function openMsg(id, allowImages=false){
+  /* ---------- Nachricht lesen ---------- */
+  async function openMsg(id, allowImages=false, tab='view'){
     if (!acct) return;
     activeId = id; renderList();
     el.reader.innerHTML = '<div class="empty"><b>Lade Nachricht …</b></div>';
     try{
       const m = await api('/messages/' + id, {token: acct.token});
-      const local = messages.find(x => x.id === id); if (local) local.seen = true;
+      const local = messages.find(x => x.id === id);
+      if (local && !local.seen){
+        local.seen = true; updateTitle();
+        api('/messages/' + id, {method:'PATCH', token: acct.token, body:{seen:true}}).catch(()=>{});
+      }
       renderList();
-      renderMsg(m, allowImages);
-      api('/messages/' + id, {method:'PATCH', token: acct.token, body:{seen:true}}).catch(()=>{});
+      renderMsg(m, allowImages, tab);
     }catch(e){
       el.reader.innerHTML = '<div class="empty"><b>Nachricht konnte nicht geladen werden</b>Versuche es noch einmal.</div>';
     }
   }
 
-  function renderMsg(m, allowImages){
+  function extractLinks(m, htmlParts){
+    const map = new Map();
+    const add = (u, label) => {
+      if (!/^https?:\/\//i.test(u) || map.size >= 40) return;
+      if (!map.has(u)) map.set(u, label || '');
+    };
+    if (htmlParts){
+      try{
+        new DOMParser().parseFromString(htmlParts, 'text/html').querySelectorAll('a[href]')
+          .forEach(a => add(a.getAttribute('href').trim(), a.textContent.trim().slice(0,60)));
+      }catch(e){}
+    }
+    (m.text || '').match(/https?:\/\/[^\s<>"')\]]+/g)?.forEach(u => add(u, ''));
+    const keyRe = /verif|confirm|activat|token|reset|best[aä]t|magic|signin|login/i;
+    return [...map].map(([url, label]) => {
+      let host = url; try{ host = new URL(url).hostname; }catch(e){}
+      return { url, label, host, key: keyRe.test(url) };
+    }).sort((a, b) => b.key - a.key);
+  }
+
+  function renderMsg(m, allowImages, tab){
     const htmlParts = Array.isArray(m.html) ? m.html.join('') : (m.html || '');
     const hasHtml = htmlParts.trim().length > 0;
-    const atts = (m.attachments || []);
+    const atts = m.attachments || [];
+    const plain = m.text || htmlParts.replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ');
+    const codes = [...new Set(plain.match(/\b\d{4,8}\b/g) || [])].slice(0, 3);
+    const links = extractLinks(m, htmlParts);
+    let sourceLoaded = false;
+
     el.reader.innerHTML = `
       <div class="r-head">
         <div class="r-subj">${esc(m.subject || '(ohne Betreff)')}</div>
         <div class="r-meta">Von ${esc(m.from?.name ? m.from.name + ' <' + m.from.address + '>' : m.from?.address)} · ${esc(fmtDate(m.createdAt))}</div>
-        <div class="r-tools">
-          <button id="rCodes">Codes kopieren</button>
-          <button id="rDel">Löschen</button>
-        </div>
+        <div class="r-tools" id="rTools"></div>
       </div>
-      ${hasHtml && !allowImages ? '<div class="note">Externe Bilder sind blockiert, damit Absender nicht sehen, dass du die Mail geöffnet hast. <button id="rImg" style="margin-left:8px;padding:4px 10px;font-size:12px">Bilder laden</button></div>' : ''}
-      <div class="r-body" id="rBody"></div>
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="view">Ansicht</button>
+        <button role="tab" data-tab="links">Links (${links.length})</button>
+        <button role="tab" data-tab="source">Quelltext</button>
+      </div>
+      <div id="rBody"></div>
       ${atts.length ? '<div class="att" id="rAtt"></div>' : ''}`;
 
-    const body = $('rBody');
-    if (hasHtml){
-      const csp = allowImages ? "img-src https: data:" : "img-src data:";
-      const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><base target="_blank">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; ${csp}; style-src 'unsafe-inline'; font-src data:">
-        <style>body{font-family:system-ui,sans-serif;font-size:15px;line-height:1.5;color:#222;margin:16px;word-break:break-word}img{max-width:100%;height:auto}</style>
-        </head><body>${htmlParts}</body></html>`;
-      const f = document.createElement('iframe');
-      f.setAttribute('sandbox', 'allow-popups allow-popups-to-escape-sandbox allow-same-origin');
-      f.setAttribute('title', 'E-Mail-Inhalt');
-      f.srcdoc = doc;
-      f.addEventListener('load', () => {
-        try{ f.style.height = Math.min(900, Math.max(300, f.contentDocument.documentElement.scrollHeight + 4)) + 'px'; }catch(e){}
-      });
-      body.appendChild(f);
-    } else {
-      const d = document.createElement('div'); d.className = 'r-text'; d.textContent = m.text || '(leere Nachricht)';
-      body.appendChild(d);
-    }
-
-    const imgBtn = $('rImg'); if (imgBtn) imgBtn.onclick = () => openMsg(m.id, true);
-    $('rDel').onclick = async () => {
+    const tools = $('rTools');
+    codes.forEach(c => {
+      const b = document.createElement('button'); b.className = 'codechip'; b.textContent = 'Code ' + c;
+      b.title = 'Code kopieren'; b.onclick = () => { copy(c); toast('Code ' + c + ' kopiert'); };
+      tools.appendChild(b);
+    });
+    const eml = document.createElement('button'); eml.textContent = '.eml speichern';
+    eml.onclick = async () => {
+      try{ const res = await api(m.downloadUrl || ('/messages/' + m.id + '/download'), {token: acct.token, raw:true}); download(await res.blob(), 'mail-' + m.id + '.eml'); }
+      catch(e){ toast('Download fehlgeschlagen'); }
+    };
+    const del = document.createElement('button'); del.textContent = 'Löschen'; del.className = 'danger';
+    del.onclick = async () => {
       try{ await api('/messages/' + m.id, {method:'DELETE', token: acct.token}); }catch(e){}
-      messages = messages.filter(x => x.id !== m.id); activeId = null; renderList(); renderEmptyReader();
+      messages = messages.filter(x => x.id !== m.id); activeId = null; renderList(); renderEmptyReader(); updateTitle();
     };
-    $('rCodes').onclick = () => {
-      const plain = m.text || htmlParts.replace(/<[^>]+>/g,' ');
-      const codes = [...new Set(plain.match(/\b\d{4,8}\b/g) || [])];
-      if (!codes.length) return toast('Kein Code gefunden');
-      copy(codes[0]); toast('Code ' + codes[0] + ' kopiert');
-    };
+    tools.append(eml, del);
+
+    const body = $('rBody');
+    function showTab(name){
+      el.reader.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+      body.innerHTML = '';
+      if (name === 'view'){
+        if (hasHtml){
+          if (!allowImages){
+            const n = document.createElement('div'); n.className = 'note';
+            n.textContent = 'Externe Bilder sind blockiert, damit Absender nicht sehen, dass du die Mail geöffnet hast.';
+            const b = document.createElement('button'); b.textContent = 'Bilder laden'; b.onclick = () => openMsg(m.id, true, 'view');
+            n.appendChild(b); body.appendChild(n);
+          }
+          const csp = allowImages ? 'img-src https: data:' : 'img-src data:';
+          const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><base target="_blank">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; ${csp}; style-src 'unsafe-inline'; font-src data:">
+            <style>body{font-family:system-ui,sans-serif;font-size:15px;line-height:1.5;color:#222;margin:16px;word-break:break-word}img{max-width:100%;height:auto}</style>
+            </head><body>${htmlParts}</body></html>`;
+          const f = document.createElement('iframe');
+          f.setAttribute('sandbox', 'allow-popups allow-popups-to-escape-sandbox allow-same-origin');
+          f.setAttribute('title', 'E-Mail-Inhalt');
+          f.srcdoc = doc;
+          f.addEventListener('load', () => {
+            try{ f.style.height = Math.min(900, Math.max(300, f.contentDocument.documentElement.scrollHeight + 4)) + 'px'; }catch(e){}
+          });
+          body.appendChild(f);
+        } else {
+          const d = document.createElement('div'); d.className = 'r-text'; d.textContent = m.text || '(leere Nachricht)';
+          body.appendChild(d);
+        }
+      } else if (name === 'links'){
+        const wrap = document.createElement('div'); wrap.className = 'links';
+        if (!links.length){
+          wrap.innerHTML = '<div class="empty"><b>Keine Links gefunden</b></div>';
+        } else {
+          const n = document.createElement('div'); n.className = 'note';
+          n.textContent = 'Prüfe die Domain, bevor du einen Link öffnest. Links in Wegwerf-Mails können Tracking oder Phishing enthalten.';
+          wrap.appendChild(n);
+          links.forEach(l => {
+            const row = document.createElement('div'); row.className = 'lnk' + (l.key ? ' key' : '');
+            const u = document.createElement('div'); u.className = 'u';
+            const d = document.createElement('div'); d.className = 'd'; d.textContent = l.label ? l.label + ' · ' + l.host : l.host;
+            const p = document.createElement('div'); p.className = 'p'; p.textContent = l.url; p.title = l.url;
+            u.append(d, p);
+            const c = document.createElement('button'); c.textContent = 'Kopieren'; c.onclick = () => { copy(l.url); toast('Link kopiert'); };
+            const o = document.createElement('a'); o.href = l.url; o.target = '_blank'; o.rel = 'noopener noreferrer';
+            const ob = document.createElement('button'); ob.textContent = 'Öffnen'; o.appendChild(ob);
+            row.append(u, c, o); wrap.appendChild(row);
+          });
+        }
+        body.appendChild(wrap);
+      } else {
+        const pre = document.createElement('div'); pre.className = 'r-text mono'; pre.textContent = sourceLoaded === false ? 'Lade Quelltext …' : '';
+        body.appendChild(pre);
+        const srcPath = m.sourceUrl || ('/sources/' + m.id);
+        api(srcPath, {token: acct.token}).then(s => { sourceLoaded = true; pre.textContent = s.data || '(leer)'; })
+          .catch(() => { pre.textContent = 'Quelltext konnte nicht geladen werden.'; });
+      }
+    }
+    el.reader.querySelectorAll('.tabs button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+    showTab(tab);
 
     if (atts.length){
       const box = $('rAtt');
@@ -387,34 +686,95 @@
         const b = document.createElement('button');
         b.textContent = `${a.filename} (${fmtSize(a.size)})`;
         b.onclick = async () => {
-          try{
-            const res = await api(a.downloadUrl, {token: acct.token, raw:true});
-            const url = URL.createObjectURL(await res.blob());
-            const l = document.createElement('a'); l.href = url; l.download = a.filename; l.click();
-            setTimeout(() => URL.revokeObjectURL(url), 2000);
-          }catch(e){ toast('Download fehlgeschlagen'); }
+          try{ const res = await api(a.downloadUrl, {token: acct.token, raw:true}); download(await res.blob(), a.filename); }
+          catch(e){ toast('Download fehlgeschlagen'); }
         };
         box.appendChild(b);
       });
     }
   }
 
-  /* ---------- Aktionen ---------- */
-  async function copy(text){
-    try{ await navigator.clipboard.writeText(text); }
-    catch(e){
-      const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t);
-      t.select(); try{ document.execCommand('copy'); }catch(_){} t.remove();
-    }
+  /* ---------- Generatoren ---------- */
+  const ADJ = ['Schneller','Stiller','Cooler','Wilder','Kluger','Roter','Blauer','Flinker','Mutiger','Sanfter'];
+  const NOUN = ['Fuchs','Pixel','Falke','Orbit','Tiger','Komet','Nebel','Panda','Rabe','Funke'];
+  const genUser = () => { el.gUser.textContent = pick(ADJ) + pick(NOUN) + pad(Math.floor(Math.random()*100)); };
+  function genPass(){
+    const sets = ['abcdefghijkmnopqrstuvwxyz','ABCDEFGHJKLMNPQRSTUVWXYZ','23456789','!@#$%&*?-_'];
+    const all = sets.join('');
+    const chars = sets.map(s => pick([...s]));
+    while (chars.length < 16) chars.push(pick([...all]));
+    for (let i = chars.length - 1; i > 0; i--){ const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i+1); [chars[i], chars[j]] = [chars[j], chars[i]]; }
+    el.gPass.textContent = chars.join('');
   }
+  $('gUserNew').onclick = genUser; $('gPassNew').onclick = genPass;
+  $('gUserCopy').onclick = () => { copy(el.gUser.textContent); toast('Benutzername kopiert'); };
+  $('gPassCopy').onclick = () => { copy(el.gPass.textContent); toast('Passwort kopiert'); };
+
+  /* ---------- Bedienung ---------- */
   el.btnCopy.onclick = async () => { if (acct){ await copy(acct.address); toast('Adresse kopiert'); } };
-  el.btnExtend.onclick = () => { if (acct){ acct.expires = Date.now() + LIFETIME*1000; store.set(acct); tick(); toast('Auf 10:00 zurückgesetzt'); } };
-  el.btnNew.onclick = newAddress;
+  el.btnExtend.onclick = () => {
+    if (!acct) return;
+    acct.total = prefs.lifetime; acct.expires = Date.now() + acct.total*1000; store.set(acct); tick(); toast('Zeit zurückgesetzt');
+  };
+  el.btnNew.onclick = () => newAddress();
+  el.btnCustom.onclick = async () => {
+    const open = el.custom.hidden;
+    el.custom.hidden = !open; el.btnCustom.setAttribute('aria-expanded', String(open));
+    if (open){ try{ await loadDomains(); }catch(e){ setStatus('Domains konnten nicht geladen werden.', true); } el.cLocal.focus(); }
+  };
+  const goCustom = () => {
+    const local = el.cLocal.value.trim().toLowerCase();
+    if (!/^[a-z0-9][a-z0-9._-]{2,29}$/.test(local)){ setStatus('Der Name braucht 3 bis 30 Zeichen: Buchstaben, Zahlen, Punkt, Binde- oder Unterstrich.', true); return; }
+    newAddress({ local, domain: el.cDomain.value });
+  };
+  el.cGo.onclick = goCustom;
+  el.cLocal.addEventListener('keydown', e => { if (e.key === 'Enter') goCustom(); });
+
+  el.life.value = String(prefs.lifetime);
+  el.life.onchange = () => { prefs.lifetime = +el.life.value; savePrefs(); toast('Gilt für neue Adressen und beim Verlängern'); };
+
+  function syncToggles(){
+    el.tSound.setAttribute('aria-pressed', String(prefs.sound));
+    el.tNotify.setAttribute('aria-pressed', String(prefs.notify));
+    el.tAuto.setAttribute('aria-pressed', String(prefs.auto));
+  }
+  el.tSound.onclick = () => { prefs.sound = !prefs.sound; savePrefs(); syncToggles(); if (prefs.sound) beep(); };
+  el.tAuto.onclick = () => { prefs.auto = !prefs.auto; savePrefs(); syncToggles(); };
+  el.tNotify.onclick = async () => {
+    if (!('Notification' in window)){ toast('Dein Browser unterstützt keine Benachrichtigungen'); return; }
+    if (!prefs.notify){
+      let perm = Notification.permission;
+      if (perm === 'default') perm = await Notification.requestPermission();
+      if (perm !== 'granted'){ toast('Benachrichtigungen sind blockiert'); return; }
+      prefs.notify = true;
+    } else prefs.notify = false;
+    savePrefs(); syncToggles();
+  };
+  if (prefs.notify && (!('Notification' in window) || Notification.permission !== 'granted')) prefs.notify = false;
+
+  function applyAccent(v){
+    const [r,g,b,hex] = v.split(',');
+    document.documentElement.style.setProperty('--acc', `${r},${g},${b}`);
+    document.documentElement.style.setProperty('--accent', hex);
+    document.querySelectorAll('.dot').forEach(d => d.setAttribute('aria-pressed', String(d.dataset.acc === v)));
+  }
+  document.querySelectorAll('.dot').forEach(d => d.onclick = () => { prefs.accent = d.dataset.acc; savePrefs(); applyAccent(prefs.accent); });
+
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const t = e.target; if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+    if (e.key === 'c' && acct) el.btnCopy.click();
+    else if (e.key === 'n') el.btnNew.click();
+    else if (e.key === 'r') poll();
+    else if (e.key === '/'){ e.preventDefault(); el.search.focus(); }
+  });
 
   /* ---------- Start ---------- */
+  applyAccent(prefs.accent); syncToggles(); genUser(); genPass(); renderList(); renderEmptyReader();
   const saved = store.get();
   if (saved && saved.expires > Date.now()){
-    acct = saved; showAccount();
+    acct = saved; if (!acct.total) acct.total = prefs.lifetime;
+    showAccount(false);
   } else {
     store.clear(); newAddress();
   }
